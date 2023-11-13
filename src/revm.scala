@@ -4,12 +4,12 @@ object RegularExpressionVM {
 
   trait Instruction
   case class Character(c: Char) extends Instruction
-  case class Jump(x: Int) extends Instruction
-  case class Split(x: Int, y: Int) extends Instruction
+  case class Jump(label: Int) extends Instruction
+  case class Split(label1: Int, label2: Int) extends Instruction
   case object Match extends Instruction
 
-  type Program = Array[Instruction]
-  type LProgram = List[Instruction]
+  type LProgram = List[Instruction]    // 命令のリスト
+  type Program = Array[Instruction]    // LProgram を配列に変換したもの。変換にあたって、label が決定される。
 
   def printProgram(program: Program): Unit = {
     var pc = 0
@@ -20,49 +20,49 @@ object RegularExpressionVM {
   }
 
   trait RegularExpression {
-    def _compile(label: Int): (Int, LProgram)
+    def _compile(label: Int): (LProgram, Int)
 
-    def compile: Program = (_compile(0)._2 ++ List(Match)).toArray
+    def compile: Program = (_compile(0)._1 ++ List(Match)).toArray
   }
 
   case object Empty extends RegularExpression {
     override def toString: String = ""
 
-    def _compile(label0: Int): (Int, LProgram) = (label0, List())
+    def _compile(label0: Int): (LProgram, Int) = (List(), label0)
   }
 
   case class C(c: Char) extends RegularExpression {
     override def toString: String = c.toString
 
-    def _compile(label0: Int): (Int, LProgram) = {
+    def _compile(label0: Int): (LProgram, Int) = {
       /*
        * L0: Character(c)
        * L1:
        */
-      val (label1, char) = (label0+1, List(Character(c)))
-      (label1, char)
+      val (char, label1) = (List(Character(c)), label0+1)
+      (char, label1)
     }
   }
 
   case class Concatenate(r1: RegularExpression, r2: RegularExpression) extends RegularExpression {
     override def toString: String = "(" + r1.toString + r2.toString + ")"
 
-    def _compile(label0: Int): (Int, LProgram) = {
+    def _compile(label0: Int): (LProgram, Int) = {
       /*
        * L0: R1を受理する命令列
        * L1: R2を受理する命令列
        * L2:
        */
-      val (label1, program1) = r1._compile(label0)
-      val (label2, program2) = r2._compile(label1)
-      (label2, program1 ++ program2)
+      val (program1, label1) = r1._compile(label0)
+      val (program2, label2) = r2._compile(label1)
+      (program1 ++ program2, label2)
     }
   }
 
   case class Alternate(r1: RegularExpression, r2: RegularExpression) extends RegularExpression {
     override def toString: String = "(" + r1.toString + "|" + r2.toString + ")"
 
-    def _compile(label0: Int): (Int, LProgram) = {
+    def _compile(label0: Int): (LProgram, Int) = {
       /*
        * L0: Split(L1, L3)
        * L1: R1を受理する命令列
@@ -71,21 +71,21 @@ object RegularExpressionVM {
        * L4:
        */
       val label1 = label0 + 1 // Split(L1, L3)
-      val (label2, program1) = r1._compile(label1)
+      val (program1, label2) = r1._compile(label1)
       val label3 = label2 + 1 // Jump(L4)
-      val (label4, program2) = r2._compile(label3)
+      val (program2, label4) = r2._compile(label3)
 
       val split = List(Split(label1, label3))
       val jump = List(Jump(label4))
 
-      (label4, split ++ program1 ++ jump ++ program2)
+      (split ++ program1 ++ jump ++ program2, label4)
     }
   }
 
   case class Star(r: RegularExpression) extends RegularExpression {
     override def toString: String = "(" + r.toString + "*)"
 
-    def _compile(label0: Int): (Int, LProgram) = {
+    def _compile(label0: Int): (LProgram, Int) = {
       /*
        * L0: Split L1, L3
        * L1: Rを受理する命令列
@@ -93,13 +93,13 @@ object RegularExpressionVM {
        * L3
        */
       val label1 = label0 + 1 // Split(L1, L3)
-      val (label2, program) = r._compile(label1)
+      val (program, label2) = r._compile(label1)
       val label3 = label2 + 1 // Jump(L0)
 
       val split = List(Split(label1, label3))
       val jump = List(Jump(label0))
 
-      (label3, split ++ program ++ jump)
+      (split ++ program ++ jump, label3)
     }
   }
 
@@ -108,6 +108,8 @@ object RegularExpressionVM {
     type StringIndex = Int
 
     def execute(program: Program, s: String): Boolean
+    // program: 正規表現から生成された仮想命令列
+    // s: 正規表現と照合する文字列
   }
 
   object RecursiveBacktrackingVM extends VM {
@@ -120,7 +122,7 @@ object RegularExpressionVM {
           case Match                 => i == s.size
         }
       }
-      _execute(0, 0)    // (ProgramCounter = 0: 命令列の最初の命令、i = 0: 文字列の最初の文字)
+      _execute(0, 0)    // (pc = 0: 命令列の最初の命令、i = 0: 文字列の最初の文字)
     }
   }
 
