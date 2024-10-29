@@ -70,7 +70,7 @@ object Example {
         else None))
     //    aaa [偶数個のa] aaaaa
 
-    println("\nfindFirstMatchInの実験1")
+    println("\n複雑な正規表現の構成方法（例：日時）から、適合した箇所の部分を取り出す方法")
     def d(n: Int): String = "[0-9]" * n
     val datetime_r1 = {
       val d2 = d(2)
@@ -78,14 +78,14 @@ object Example {
       val ymd = f"($d4)/($d2)/($d2)"
       val hm = f"($d2):($d2)"
       val datetime = ymd + "  *" + hm
-      println(f" - $datetime")
+      println(f" - 日時のパターン：$datetime")
       datetime.r
     }
 
     // findFirstMatchIn: CharSequence => Option[Match]
-    val date_string = "The time of this writing is: 2022/11/14 13:50"
+    val date_string = "The time of this writing is: 2024/10/29 12:57"
 
-    datetime_r1.findFirstMatchIn(date_string) match {
+    datetime_r1.findFirstMatchIn(date_string) match {  // m.group(n) で n番目の部分を取り出せる
       case Some(m) => {
         println(f" - 適合した部分: ${m.group(0)}")
         println(f" - Year: ${m.group(1)}")
@@ -97,7 +97,7 @@ object Example {
       case _ => ()
     }
 
-    println("\nfindFirstMatchInの実験2")
+    println("\nfindFirstMatchInの実験2")  // 適合した箇所を記号で参照する方法（前の例は番号で参照していた）
     val datetime_r2 = {
       val d2 = d(2)
       val d4 = d(4)
