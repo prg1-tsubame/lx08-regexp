@@ -8,8 +8,9 @@ object Ex1aSimple {
     object Diamond extends Suit
     object Heart extends Suit
 
-    def run = {
+    @main def run_1a = {
         val suits = List[Suit](Spade, Heart)
+        println("The list of cards")
         for (suit <- suits) println(suit)
     }
 }
@@ -20,21 +21,15 @@ object Ex1bSimple {  // object => case object と変更しただけ
     case object Diamond extends Suit    // ♦️
     case object Heart extends Suit    // ❤️
 
-    def run = {
+    @main def run_1b = {
         val suits = List[Suit](Spade, Heart)
+        println("The list of cards")
         for (suit <- suits) println(suit)
     }
 }
 
-@main def ex1_simple_trait = {
-    Ex1aSimple.run
-    println(" ")
-    Ex1bSimple.run
-}
-
-
 object Cards {
-    import Ex1bSimple._  // object Ex1bSimple の内側の定義をすべて、この object に読み込む
+    import Ex1bSimple.*  // object Ex1bSimple の内側の定義をすべて、この object に読み込む
 
     trait Rank
 
@@ -46,7 +41,7 @@ object Cards {
 
     case class Card(suit: Suit, rank: Rank)
 
-    def run = {
+    @main def run_cards = {
         val cards = List[Card](
             Card(Spade,   Ace),
             Card(Heart,   Ace),
@@ -58,8 +53,6 @@ object Cards {
     }
 }
 
-@main def ex2a_parametric_cards = Cards.run
-
 object Pets {
     trait Pet {
         val name: String
@@ -69,7 +62,7 @@ object Pets {
 
     class Dog(val name: String) extends Pet
 
-    def run = {
+    @main def run_pets = {
         val dog = Dog("ぽち")
         val cat1 = Cat("たま")
         val cat2 = Cat("三毛")
@@ -80,5 +73,3 @@ object Pets {
         animals.foreach(pet => println((pet.name, pet)))
     }
 }
-
-@main def ex2b_parametric_pets = Pets.run
