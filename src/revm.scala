@@ -209,7 +209,7 @@ object RegularExpressionVM {
   object KenThompsonVM extends VM {
 
     def execute(program: Program, s: String): Boolean = {
-      //printProgram(program)
+      printProgram(program)
       def endOfLine(i: Int): Boolean = i == s.length
 
       // threads は文字列の i 文字目を処理したがっているスレッドたちが実行しようとしている命令の PC の集合
