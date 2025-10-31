@@ -1,4 +1,4 @@
-package prg1.lx09.caseclass
+package prg1.lx08.caseclass
 
 object ClassExample {
     class Person(first: String, last: String)
