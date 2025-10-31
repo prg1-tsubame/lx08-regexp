@@ -28,11 +28,10 @@ object Benchmark {
 ベンチマークの実行結果
 
 実行環境
-    Scala Build Tool (sbt) 1.7.1 (Azul Systems, Inc. Java 19.0.2)
-    Scala Version: 3.2.2
-    Java Development Kit: zulu19.32.15-ca-fx-jdk19.0.2-macosx_aarch64
+    Scala Build Tool (sbt) 1.11.6 (Eclipse Adoptium Java 17.0.12)
+    Scala Version: 3.7.2
 
-    MacBook Air (M1, 2020 model, Apple M1, 16GB 1600 MHz DDR3)
+    MacBook Air (Apple M3, 2024 model, Apple M3, 16GB)
 
  1:  0.00s
  2:  0.00s
@@ -50,18 +49,18 @@ object Benchmark {
 14:  0.00s
 15:  0.00s
 16:  0.00s
-17:  0.01s
-18:  0.03s
+17:  0.00s
+18:  0.00s
 19:  0.01s
-20:  0.02s
-21:  0.03s
-22:  0.06s
-23:  0.11s
-24:  0.23s
-25:  0.46s
-26:  0.95s
-27:  1.86s
-28:  3.85s
-29:  7.59s
-30: 15.73s
+20:  0.01s
+21:  0.02s
+22:  0.04s
+23:  0.08s
+24:  0.15s
+25:  0.32s
+26:  0.63s
+27:  1.30s
+28:  2.59s
+29:  5.34s
+30: 10.69s
 **/
